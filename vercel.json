@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "true",
   "buildCommand": "python3 scripts/build_vercel_site.py",
   "outputDirectory": "dist",
   "framework": null
