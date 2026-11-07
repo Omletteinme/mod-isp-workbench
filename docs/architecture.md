@@ -2,53 +2,7 @@
 
 This diagram reflects the implemented code paths. The Bayer restoration model, sRGB denoiser, and camera-managed RAW renderer are separate paths; they are not interchangeable models.
 
-```mermaid
-flowchart TB
-  U[Browser workbench] -->|multipart image + profile + options| API[Flask /api/process]
-  API --> DEC{Input decoder}
-  DEC -->|Camera RAW| RAW[rawpy / LibRaw\nCFA + levels + WB metadata\nAHD demosaic + sRGB render]
-  DEC -->|Normalized RGGB .npy| BAYER[Validate 2-D [0,1]\nRGGB mosaic]
-  DEC -->|JPEG / PNG / WebP / TIFF| RGB[Rendered RGB image]
-
-  RAW --> RGBPIPE[RGB finishing]
-  RGB --> RGBPIPE
-  RGBPIPE --> CLASSRGB[Classical RGB\nexposure + bilateral + detail]
-  RGBPIPE --> SIDD[SIDD-CC sRGB\nNAFNet denoiser]
-  RGBPIPE --> RGBGATE[RGB high-pass tile ranking]
-  RGBGATE -->|selected tiles| SIDD
-  RGBGATE -->|unselected tiles| CLASSRGB
-
-  BAYER --> NORM[Black-level normalization\nand as-shot WB]
-  NORM --> DEMOSAIC[Classical bilinear demosaic]
-  NORM --> MODISP[Compact Bayer-v1\nrestoration network]
-  NORM --> GATE[Relative variance/brightness\ntile rank gate]
-  GATE -->|selected tiles| MODISP
-  GATE -->|remaining tiles| DEMOSAIC
-  DEMOSAIC --> FINISH[Bayer RGB finishing]
-  MODISP --> FINISH
-  GATE --> FINISH
-
-  CLASSRGB --> RESULTS[Encoded outputs per available path]
-  SIDD --> RESULTS
-  FINISH --> RESULTS
-  RESULTS --> REF{Aligned reference attached?}
-  REF -->|yes| METRICS[PSNR · SSIM · Delta E 2000 · LPIPS]
-  REF -->|no| OUT[Return images + actual local timing + resource measurements]
-  METRICS --> OUT
-  OUT --> U
-
-  subgraph Research workflow
-    PAIRS[Registered input/target pairs] --> TRAIN[train.py\nL1 reconstruction + optional teacher loss]
-    TEACHER[Optional supplied teacher] --> TRAIN
-    TRAIN --> CKPT[Bayer checkpoint]
-    CKPT --> EXPORT[export_litert.py]
-    CAL[Calibration split] --> GATECFG[calibrate_gate.py]
-    CKPT --> GATECFG
-    TEST[Held-out split] --> EVAL[evaluate.py / verify_gate.py]
-    CKPT --> EVAL
-    GATECFG --> EVAL
-  end
-```
+![MOD-ISP system architecture](architecture.png)
 
 ## Runtime boundaries
 

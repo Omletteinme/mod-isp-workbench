@@ -15,3 +15,5 @@ models/metaisp_2023_real_D.pth
 
 # Local training scratch and external worktrees
 work/
+.vercel
+dist/

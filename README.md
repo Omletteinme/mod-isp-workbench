@@ -49,33 +49,7 @@ The local datasets and original MetaISP teacher checkpoint are not included. Eva
 
 This diagram describes the current code paths. It does not describe unimplemented blueprint targets such as a camera-calibrated CCM, a learned noise estimator, or mobile NPU execution.
 
-```mermaid
-flowchart LR
-  A[Input image] --> B{Input type}
-  B -->|Camera RAW| C[LibRaw DNG-aware demosaic and color render]
-  B -->|Normalized Bayer NPY| C2[Black-level normalization and white balance]
-  C --> E{Selected path}
-  C2 --> E
-  E -->|Classical| F[RGB finishing and bilateral denoise]
-  E -->|Learned| G[Fine-tuned SIDD-CC sRGB NAFNet]
-  E -->|Hybrid| H[High-pass RGB tile ranking]
-  H --> I[Neural denoise selected tiles and smooth blend]
-  H --> F
-  I --> J[RGB tone and detail finishing]
-  F --> J
-  G --> J
-  B -->|JPEG / PNG / WebP / TIFF| K[Exposure lift and tone finishing]
-  K --> L{Selected path}
-  L -->|Classical| M[Bilateral RGB denoise]
-  L -->|Learned| N[Fine-tuned SIDD-CC sRGB NAFNet]
-  L -->|Hybrid| O[High-pass tile ranking then NAFNet]
-  M --> P[Sharpen and optional pretrained style LUT]
-  J --> P
-  N --> P
-  O --> P
-  P --> Q[RGB output]
-  Q --> R[Optional aligned-reference metrics]
-```
+![MOD-ISP system architecture diagram](docs/architecture.png)
 
 Camera RAW files are demosaiced and color-rendered through LibRaw, which applies embedded DNG camera metadata. The available SIDD-CC sRGB denoiser then operates on that rendered image; the Bayer-trained checkpoint is not applied to cameras it was not calibrated on. Normalized Bayer NPY files still use the learned Bayer path. The Bayer gate uses relative tile ranking and routes 96% of tiles in the recorded held-out run. It is not a calibrated sensor-noise estimator. Bayer and sRGB learned models are separate checkpoints and were trained/evaluated on different data domains.
 
@@ -129,8 +103,8 @@ The adapter maps RGGB to the teacher's B/G/R/G channels, constructs a patch-loca
 
 ```sh
 python train.py --data data/train --teacher models/metaisp_2023_real_D.pth --teacher-format metaisp2023 --teacher-neutral 0.55273438 1 0.484375 --teacher-device 1 --epochs 8 --patch 128 --out models/student_metaisp2023.pt
-python calibrate_gate.py --data data/calibration --checkpoint models/student_metaisp2023.pt --out models/student_metaisp2023_gate.json
-python verify_gate.py --data data/test --checkpoint models/student_metaisp2023.pt --gate models/student_metaisp2023_gate.json --out student_metaisp2023_gate_validation.json
+python calibrate_gate.py --data data/calibration --checkpoint models/student_metaisp2023.pt --out models/gate.json
+python verify_gate.py --data data/test --checkpoint models/student_metaisp2023.pt --gate models/gate.json --out student_metaisp2023_gate_validation.json
 ```
 
 
