@@ -1,0 +1,9 @@
+data/
+.venv/
+.venv*/
+.trainenv/
+.git/
+__pycache__/
+models/metaisp_2023_real_D.pth
+work/
+results/

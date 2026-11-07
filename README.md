@@ -2,6 +2,8 @@
 
 A local experimental Bayer-to-RGB workbench based on the MOD-ISP proposal. The application contains classical demosaicing, a compact trainable Haar-wavelet attention network and pointwise learned color transform, variance-gated tile processing, reference metrics, paired-data training, distillation, LiteRT INT8 export, and held-out evaluation. This is an experimental implementation; it has not met the blueprint’s projected quality targets.
 
+The [Vercel project](VERCEL.md) serves a static project page. Image inference runs locally or in Docker because the model runtime and comparison payload exceed Vercel Function limits.
+
 ## Installation and launch
 
 Use Python 3.10–3.12. For a local inference/demo run, install the runtime dependencies and launch with one command:
