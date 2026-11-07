@@ -8,7 +8,7 @@ if dist.exists():
 dist.mkdir()
 
 shutil.copy2(root / "templates" / "index.html", dist / "index.html")
-shutil.copytree(root / "static", dist / "static")
+shutil.copytree(root / "static", dist / "static", ignore=shutil.ignore_patterns("app.js"))
 
 index = dist / "index.html"
 html = index.read_text()
@@ -16,6 +16,7 @@ html = html.replace(
     '<nav class="topnav" aria-label="Workbench sections"><a class="current" href="#workbench">Workbench</a><a href="#methods-title">Processing paths</a><a href="#measurements-title">Measurements</a></nav>',
     '<nav class="topnav" aria-label="Project links"><a class="current" href="#workbench">Project</a><a href="https://github.com/harshithhgowdaa/mod-isp-workbench">Source &amp; docs ↗</a></nav>',
 )
+html = html.replace('  <script src="/static/app.js"></script>\n', "")
 
 # Turn the inference workbench into a transparent project landing page on Vercel.
 html = html.replace(
