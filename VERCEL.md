@@ -14,4 +14,6 @@ The static Vercel page points visitors to the repository's setup instructions an
 
 `vercel.json` builds a static output directory from `templates/index.html` and `static/` using `scripts/build_vercel_site.py`. The `.vercelignore` file excludes local datasets, virtual environments, and scratch files.
 
+The current Vercel project is not connected to GitHub because this Vercel account does not have a GitHub Login Connection. Pushes to GitHub therefore do not deploy automatically. After updating the interface, run `scripts/deploy_vercel_static.sh` with the Vercel CLI authenticated to the project team. The script rebuilds `dist/` and uploads only those static files, without Git commit metadata or the Python training dependencies.
+
 References: [Vercel Flask](https://vercel.com/docs/frameworks/backend/flask), [Python runtime bundle limits](https://vercel.com/docs/functions/runtimes/python), and [Vercel Function limits](https://vercel.com/docs/functions/limitations).
