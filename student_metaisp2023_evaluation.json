@@ -1,0 +1,136 @@
+{
+  "dataset": "./data/test",
+  "checkpoint": "models/student_metaisp2023.pt",
+  "model": {
+    "trained_steps": 320,
+    "dataset": "./data/train",
+    "architecture": "bayer-v1"
+  },
+  "parameters": 29980,
+  "checkpoint_bytes": 127053,
+  "environment": "macOS-15.7.7-arm64-arm-64bit",
+  "peak_rss_raw": 456146944,
+  "peak_rss_note": "Process high-water mark; bytes on macOS, KiB on Linux; includes Python and metrics libraries.",
+  "results": [
+    {
+      "image": "test_000.npy",
+      "pipeline": "classical",
+      "latency_ms": 15.83,
+      "routed_percent": null,
+      "psnr": 11.38,
+      "ssim": 0.4525,
+      "delta_e": 25.78,
+      "lpips": 0.3257
+    },
+    {
+      "image": "test_000.npy",
+      "pipeline": "learned",
+      "latency_ms": 23.68,
+      "routed_percent": 100.0,
+      "psnr": 15.45,
+      "ssim": 0.5804,
+      "delta_e": 22.17,
+      "lpips": 0.6084
+    },
+    {
+      "image": "test_000.npy",
+      "pipeline": "hybrid",
+      "latency_ms": 43.75,
+      "routed_percent": 96.0,
+      "psnr": 14.41,
+      "ssim": 0.3865,
+      "delta_e": 23.92,
+      "lpips": 0.7635
+    },
+    {
+      "image": "test_001.npy",
+      "pipeline": "classical",
+      "latency_ms": 25.39,
+      "routed_percent": null,
+      "psnr": 9.67,
+      "ssim": 0.5731,
+      "delta_e": 34.36,
+      "lpips": 0.4298
+    },
+    {
+      "image": "test_001.npy",
+      "pipeline": "learned",
+      "latency_ms": 25.6,
+      "routed_percent": 100.0,
+      "psnr": 9.73,
+      "ssim": 0.1631,
+      "delta_e": 38.19,
+      "lpips": 0.9002
+    },
+    {
+      "image": "test_001.npy",
+      "pipeline": "hybrid",
+      "latency_ms": 42.12,
+      "routed_percent": 96.0,
+      "psnr": 9.89,
+      "ssim": 0.0996,
+      "delta_e": 33.99,
+      "lpips": 1.0113
+    },
+    {
+      "image": "test_002.npy",
+      "pipeline": "classical",
+      "latency_ms": 14.9,
+      "routed_percent": null,
+      "psnr": 9.77,
+      "ssim": 0.618,
+      "delta_e": 27.07,
+      "lpips": 0.1918
+    },
+    {
+      "image": "test_002.npy",
+      "pipeline": "learned",
+      "latency_ms": 23.07,
+      "routed_percent": 100.0,
+      "psnr": 13.1,
+      "ssim": 0.5054,
+      "delta_e": 19.76,
+      "lpips": 0.6613
+    },
+    {
+      "image": "test_002.npy",
+      "pipeline": "hybrid",
+      "latency_ms": 42.66,
+      "routed_percent": 96.0,
+      "psnr": 12.87,
+      "ssim": 0.3539,
+      "delta_e": 22.62,
+      "lpips": 0.6965
+    },
+    {
+      "image": "test_003.npy",
+      "pipeline": "classical",
+      "latency_ms": 15.2,
+      "routed_percent": null,
+      "psnr": 10.6,
+      "ssim": 0.5497,
+      "delta_e": 29.52,
+      "lpips": 0.1939
+    },
+    {
+      "image": "test_003.npy",
+      "pipeline": "learned",
+      "latency_ms": 23.37,
+      "routed_percent": 100.0,
+      "psnr": 10.1,
+      "ssim": 0.3677,
+      "delta_e": 35.61,
+      "lpips": 0.7292
+    },
+    {
+      "image": "test_003.npy",
+      "pipeline": "hybrid",
+      "latency_ms": 44.3,
+      "routed_percent": 96.0,
+      "psnr": 10.85,
+      "ssim": 0.2486,
+      "delta_e": 29.07,
+      "lpips": 0.7557
+    }
+  ]
+}

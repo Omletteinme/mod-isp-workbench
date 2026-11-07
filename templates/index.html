@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111318">
+  <title>MOD-ISP · Image restoration workbench</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="MOD-ISP home"><span class="brand-mark" aria-hidden="true">M</span><span>MOD<span class="brand-dash">—</span>ISP</span></a>
+    <nav class="topnav" aria-label="Workbench sections"><a class="current" href="#workbench">Workbench</a><a href="#methods-title">Processing paths</a><a href="#measurements-title">Measurements</a></nav>
+    <span class="system-status"><i id="status-dot" aria-hidden="true"></i><span id="model-status">Checking local processors</span></span>
+  </header>
+
+  <main id="workbench" class="workspace">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="signal-art" aria-hidden="true"><span class="signal-label">IMAGE SIGNAL / LOCAL SESSION</span><div class="signal-grid"></div><div class="signal-trace"></div><div class="signal-index">R G G B <span>→</span> RGB</div></div>
+      <div class="intro-copy"><p class="eyebrow"><span class="live-dot"></span> LOCAL IMAGE LAB <span class="eyebrow-rule"></span> MOD-ISP</p><h1 id="page-title">Image restoration,<br><span>under the microscope.</span></h1><div class="intro-foot"><p>Compare classical, learned, and hybrid processing on your own image. Results and measurements stay on this machine.</p><span class="local-note">EXPERIMENTAL WORKBENCH</span></div></div>
+    </section>
+
+    <section class="workflow" aria-label="Image processing workflow">
+      <div class="workflow-head"><div><span class="section-index">01 / INPUT</span><h2>Set up a run</h2></div><span class="privacy-note"><span class="privacy-icon" aria-hidden="true">↗</span> Processing is local</span></div>
+      <div class="control-strip">
+        <label class="input-control" id="drop">
+          <span class="control-label">Source image</span>
+          <span class="input-file-row"><span id="file-name">Choose a file or drop it here</span><span class="browse-label">Browse <b aria-hidden="true">↗</b></span></span>
+          <small>RAW · RGGB NPY · JPEG · PNG · WEBP · TIFF <span>UP TO 30 MB</span></small>
+          <input id="image" type="file" accept=".jpg,.jpeg,.png,.webp,.tif,.tiff,.npy,.dng,.nef,.cr2,.cr3,.arw,.raf,.rw2">
+        </label>
+
+        <fieldset class="mode-control">
+          <legend class="control-label">Output profile</legend>
+          <div class="segmented" role="group" aria-label="Output profile"><button class="mode active" type="button" data-mode="human" aria-pressed="true">Human</button><button class="mode" type="button" data-mode="machine" aria-pressed="false">Machine vision</button></div>
+          <small>Finishing profile</small>
+        </fieldset>
+
+        <label class="reference-control" for="reference">
+          <span class="control-label">Aligned reference <em>OPTIONAL</em></span>
+          <span class="reference-file"><span id="ref-name">Add a matching image</span><span class="browse-label">Add <b aria-hidden="true">＋</b></span></span>
+          <small>Enables reference quality metrics</small>
+          <input id="reference" type="file" accept="image/*,.dng,.nef,.arw">
+        </label>
+
+        <details class="advanced-control">
+          <summary><span class="control-label">Adjustments</span><span class="adjustment-value">Strength · style <b aria-hidden="true">＋</b></span></summary>
+          <div class="advanced-content">
+            <label class="strength-control" for="strength"><span>Processing strength <output id="strength-value">1.0×</output></span><input id="strength" type="range" min="0" max="2" step="0.1" value="1"></label>
+            <label class="style-control" for="style">CNILUT style<select id="style" class="style-select"><option value="off">Off</option><option value="0">Research style 1</option><option value="1">Research style 2</option><option value="2">Research style 3</option></select></label>
+          </div>
+        </details>
+        <button id="run" class="run-button" type="button" disabled><span>Process image</span><span aria-hidden="true">↗</span></button>
+      </div>
+      <p id="error" role="alert" aria-live="polite"></p>
+    </section>
+
+    <section class="proof-section" aria-labelledby="proof-title">
+      <div class="section-heading"><div><span class="section-index">02 / COMPARE</span><h2 id="proof-title">The image, in two states.</h2><p id="source-summary">Choose a source image to begin.</p></div><a id="download" class="download disabled" download="mod-isp-hybrid.jpg" aria-disabled="true"><span>Download output</span><b aria-hidden="true">↓</b></a></div>
+      <div class="paired-images" id="comparison">
+        <figure class="image-panel"><figcaption><span><i class="plate-dot" aria-hidden="true"></i> SOURCE</span><span id="input-meta">Waiting for image</span></figcaption><div class="image-frame" id="input-frame"><img id="input-img" src="data:," alt="Input image preview"><div id="empty-input" class="empty-output"><span class="empty-cross" aria-hidden="true">＋</span><span>Source image appears here</span><small>DROP AN IMAGE TO START</small></div></div></figure>
+        <figure class="image-panel output-panel"><figcaption><span><i class="plate-dot output-dot" aria-hidden="true"></i><span id="output-label">HYBRID OUTPUT</span></span><span id="dimensions">—</span></figcaption><div class="image-frame output-frame" id="output-frame"><img id="output-img" src="data:," alt="Processed output preview"><div id="empty-output" class="empty-output"><span class="empty-cross" aria-hidden="true">＋</span><span>Processed image appears here</span><small>RUN PROCESSING TO VIEW RESULT</small></div></div></figure>
+      </div>
+    </section>
+
+    <section id="raw-integrity" class="raw-integrity" aria-labelledby="raw-integrity-title" hidden>
+      <div class="section-heading compact-heading">
+        <div><h2 id="raw-integrity-title">RAW sensor record</h2><p>Metadata and clipping checks from this file</p></div>
+        <span id="raw-integrity-status">Not available</span>
+      </div>
+      <dl class="raw-integrity-grid">
+        <div><dt>Camera</dt><dd id="raw-camera">—</dd></div>
+        <div><dt>Bayer pattern</dt><dd id="raw-cfa">—</dd></div>
+        <div><dt>Black level · RGGB</dt><dd id="raw-black">—</dd></div>
+        <div><dt>White level</dt><dd id="raw-white">—</dd></div>
+        <div><dt>White balance · RGGB</dt><dd id="raw-wb">—</dd></div>
+        <div><dt>Color matrix</dt><dd id="raw-matrix">—</dd></div>
+        <div><dt>Renderer</dt><dd id="raw-renderer">—</dd></div>
+        <div><dt>Shadow clipping</dt><dd id="raw-shadow-clip">—</dd></div>
+        <div><dt>Highlight clipping</dt><dd id="raw-highlight-clip">—</dd></div>
+        <div><dt>Noise estimate</dt><dd id="raw-noise">—</dd></div>
+      </dl>
+      <p id="raw-integrity-note" class="raw-integrity-note">Values describe the RAW metadata and sensor samples. Noise is not camera-calibrated.</p>
+    </section>
+
+    <section class="methods-section" aria-labelledby="methods-title"><div class="section-heading compact-heading"><div><span class="section-index">03 / SELECT</span><h2 id="methods-title">Processing paths</h2></div><span id="path-status">Run a process to compare</span></div>
+      <div class="method-list" role="tablist" aria-label="Select a processing path">
+        <button class="method-row" type="button" role="tab" aria-selected="false" data-view="classical" disabled><span class="method-title">Classical</span><span class="method-description">Deterministic baseline</span><span class="method-runtime" data-runtime="classical">—</span><span class="method-state" data-state="classical">Waiting</span><span class="method-arrow" aria-hidden="true">↗</span></button>
+        <button class="method-row" type="button" role="tab" aria-selected="false" data-view="learned" disabled><span class="method-title">Learned</span><span class="method-description" data-description="learned">Trained restoration model</span><span class="method-runtime" data-runtime="learned">—</span><span class="method-state" data-state="learned">Waiting</span><span class="method-arrow" aria-hidden="true">↗</span></button>
+        <button class="method-row" type="button" role="tab" aria-selected="false" data-view="hybrid" disabled><span class="method-title">Hybrid</span><span class="method-description" data-description="hybrid">Classical path with gated restoration</span><span class="method-runtime" data-runtime="hybrid">—</span><span class="method-state" data-state="hybrid">Waiting</span><span class="method-arrow" aria-hidden="true">↗</span></button>
+      </div>
+      <p class="benchmark-proof"><strong>Validated sRGB benchmark</strong> · 33.78 dB PSNR · 0.776 SSIM across 928 SIDD-CC test blocks. This is a separate denoising benchmark, not a score for the current upload or Bayer RAW quality.</p>
+    </section>
+
+    <section class="measurement-section" aria-labelledby="measurements-title"><div class="section-heading compact-heading"><div><span class="section-index">04 / MEASURE</span><h2 id="measurements-title">Run measurements</h2></div><span id="measurement-state">Actual local execution</span></div>
+      <div class="execution-table-wrap"><table class="execution-table"><thead><tr><th scope="col">Selected path</th><th scope="col">Latency</th><th scope="col">Memory</th><th scope="col">Parameters</th><th scope="col">Model size</th></tr></thead><tbody><tr><td id="selected-method">—</td><td id="latency">—</td><td id="memory">—</td><td id="parameters">—</td><td id="model-size">—</td></tr></tbody></table></div>
+      <div class="quality-block"><div class="quality-heading"><h3>Reference quality</h3><span id="quality-state">Reference required</span></div><dl class="quality-metrics"><div><dt>PSNR</dt><dd id="psnr">—</dd></div><div><dt>SSIM</dt><dd id="ssim">—</dd></div><div><dt>Delta E 2000</dt><dd id="delta-e">—</dd></div><div><dt>LPIPS</dt><dd id="lpips">—</dd></div></dl></div>
+      <p id="measurement-note" class="measurement-note">Quality scores require an aligned reference. Memory reports Python allocations and excludes native/accelerator allocations.</p>
+    </section>
+    <footer class="page-footer"><span>MOD-ISP · LOCAL RESEARCH WORKBENCH</span><span>EXPERIMENTAL IMPLEMENTATION <i aria-hidden="true">·</i> RESULTS VARY BY INPUT</span></footer>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

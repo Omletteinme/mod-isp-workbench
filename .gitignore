@@ -1,0 +1,17 @@
+# Local datasets and source captures (must be obtained separately under their terms)
+data/
+
+# Local Python environments and generated files
+.venv/
+.venv*/
+.trainenv/
+__pycache__/
+*.py[cod]
+.DS_Store
+*.log
+
+# Original MetaISP teacher weights are not redistributed
+models/metaisp_2023_real_D.pth
+
+# Local training scratch and external worktrees
+work/

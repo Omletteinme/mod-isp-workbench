@@ -1,0 +1,20 @@
+{
+  "method": "33^3 trilinear grid versus official pretrained MLP on 16384 uniform random 8-bit colors; includes 8-bit output quantization",
+  "results": [
+    {
+      "style": 1,
+      "mean_abs_error": 0.0019285669550299644,
+      "max_abs_error": 0.009715616703033447
+    },
+    {
+      "style": 2,
+      "mean_abs_error": 0.0019145224941894412,
+      "max_abs_error": 0.011179625988006592
+    },
+    {
+      "style": 3,
+      "mean_abs_error": 0.0018560668686404824,
+      "max_abs_error": 0.013978779315948486
+    }
+  ]
+}

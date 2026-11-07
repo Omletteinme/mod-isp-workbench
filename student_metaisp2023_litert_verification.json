@@ -1,0 +1,96 @@
+{
+  "source": "./data/test",
+  "comparison": "PyTorch float32 vs full-int8 LiteRT on held-out tiles; no mobile NPU measured",
+  "rows": [
+    {
+      "image": "test_000.npy",
+      "tile": [
+        0,
+        0
+      ],
+      "input_clipped_percent": 0.0,
+      "mean_abs_error": 0.005031798034906387,
+      "max_abs_error": 0.01991647481918335,
+      "cpu_inference_ms": 0.332
+    },
+    {
+      "image": "test_000.npy",
+      "tile": [
+        128,
+        128
+      ],
+      "input_clipped_percent": 0.0,
+      "mean_abs_error": 0.005404533352702856,
+      "max_abs_error": 0.019427508115768433,
+      "cpu_inference_ms": 0.289
+    },
+    {
+      "image": "test_001.npy",
+      "tile": [
+        0,
+        0
+      ],
+      "input_clipped_percent": 0.0,
+      "mean_abs_error": 0.005171121563762426,
+      "max_abs_error": 0.019610881805419922,
+      "cpu_inference_ms": 0.284
+    },
+    {
+      "image": "test_001.npy",
+      "tile": [
+        128,
+        128
+      ],
+      "input_clipped_percent": 0.0,
+      "mean_abs_error": 0.005189341958612204,
+      "max_abs_error": 0.01882767677307129,
+      "cpu_inference_ms": 0.28
+    },
+    {
+      "image": "test_002.npy",
+      "tile": [
+        0,
+        0
+      ],
+      "input_clipped_percent": 0.0,
+      "mean_abs_error": 0.10122384130954742,
+      "max_abs_error": 1.3072216510772705,
+      "cpu_inference_ms": 0.282
+    },
+    {
+      "image": "test_002.npy",
+      "tile": [
+        128,
+        128
+      ],
+      "input_clipped_percent": 0.0,
+      "mean_abs_error": 0.006138623226433992,
+      "max_abs_error": 0.03836989402770996,
+      "cpu_inference_ms": 0.28
+    },
+    {
+      "image": "test_003.npy",
+      "tile": [
+        0,
+        0
+      ],
+      "input_clipped_percent": 0.0,
+      "mean_abs_error": 0.00573697779327631,
+      "max_abs_error": 0.019884973764419556,
+      "cpu_inference_ms": 0.299
+    },
+    {
+      "image": "test_003.npy",
+      "tile": [
+        128,
+        128
+      ],
+      "input_clipped_percent": 0.0,
+      "mean_abs_error": 0.005038144998252392,
+      "max_abs_error": 0.019475340843200684,
+      "cpu_inference_ms": 0.284
+    }
+  ],
+  "mean_abs_error": 0.01736679777968675,
+  "mean_input_clipped_percent": 0.0
+}

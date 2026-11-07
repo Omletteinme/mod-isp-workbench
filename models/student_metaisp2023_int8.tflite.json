@@ -1,0 +1,21 @@
+{
+  "checkpoint": "models/student_metaisp2023.pt",
+  "calibration_data": "data/calibration",
+  "tile": 56,
+  "bytes": 47112,
+  "input_quantization": [
+    0.003921568859368563,
+    -128
+  ],
+  "output_quantization": [
+    0.013988927938044071,
+    -128
+  ],
+  "max_abs_error": 0.02006438374519348,
+  "mean_abs_error": 0.0048918952234089375,
+  "checkpoint_metadata": {
+    "trained_steps": 320,
+    "dataset": "./data/train",
+    "architecture": "bayer-v1"
+  }
+}

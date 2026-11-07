@@ -1,0 +1,141 @@
+{
+  "gate": {
+    "route_fraction": 0.95,
+    "mean_psnr": 19.729431156166726,
+    "mean_routed_percent": 96.0,
+    "mode": "relative_rank",
+    "dataset": "./data/calibration",
+    "criterion": "Minimize neural tiles while keeping calibration mean PSNR within budget of all-neural hybrid. Rank tiles by variance / (mean intensity squared + 1e-6).",
+    "max_psnr_drop_db": 0.5,
+    "baseline_psnr_db": 20.14486508477043,
+    "warning": "Fixed budget does not guarantee quality on unseen scenes; routed tiles do not measure MACs or latency.",
+    "candidates": [
+      {
+        "route_fraction": 1.0,
+        "mean_psnr": 20.14486508477043,
+        "mean_routed_percent": 100.0
+      },
+      {
+        "route_fraction": 0.95,
+        "mean_psnr": 19.729431156166726,
+        "mean_routed_percent": 96.0
+      },
+      {
+        "route_fraction": 0.9,
+        "mean_psnr": 19.27762752858652,
+        "mean_routed_percent": 92.0
+      },
+      {
+        "route_fraction": 0.85,
+        "mean_psnr": 18.78538161519114,
+        "mean_routed_percent": 88.0
+      },
+      {
+        "route_fraction": 0.8,
+        "mean_psnr": 17.788227760260895,
+        "mean_routed_percent": 80.0
+      },
+      {
+        "route_fraction": 0.75,
+        "mean_psnr": 17.365181164035832,
+        "mean_routed_percent": 76.0
+      },
+      {
+        "route_fraction": 0.7,
+        "mean_psnr": 16.986074824470872,
+        "mean_routed_percent": 72.0
+      },
+      {
+        "route_fraction": 0.6,
+        "mean_psnr": 16.092916952511363,
+        "mean_routed_percent": 60.0
+      },
+      {
+        "route_fraction": 0.5,
+        "mean_psnr": 15.626457419114136,
+        "mean_routed_percent": 52.0
+      },
+      {
+        "route_fraction": 0.4,
+        "mean_psnr": 15.06837303210824,
+        "mean_routed_percent": 40.0
+      },
+      {
+        "route_fraction": 0.2,
+        "mean_psnr": 14.300155973470023,
+        "mean_routed_percent": 20.0
+      },
+      {
+        "route_fraction": 0.0,
+        "mean_psnr": 13.801756176496133,
+        "mean_routed_percent": 0.0
+      }
+    ]
+  },
+  "dataset": "./data/test",
+  "environment": "macOS-15.7.7-arm64-arm-64bit",
+  "repeats": 3,
+  "timing": "Median warm local CPU wall time including model loading, tiled inference and classical finishing; not mobile latency or measured MACs.",
+  "rows": [
+    {
+      "image": "test_000.npy",
+      "all_neural": {
+        "psnr_db": 14.429715203001358,
+        "routed_percent": 100.0,
+        "latency_median_ms": 39.61504198377952
+      },
+      "calibrated": {
+        "psnr_db": 14.210517873060905,
+        "routed_percent": 96.0,
+        "latency_median_ms": 38.93779095960781
+      },
+      "quality_change_db": -0.21919732994045305
+    },
+    {
+      "image": "test_001.npy",
+      "all_neural": {
+        "psnr_db": 9.53283946108501,
+        "routed_percent": 100.0,
+        "latency_median_ms": 41.40895901946351
+      },
+      "calibrated": {
+        "psnr_db": 9.511711500315434,
+        "routed_percent": 96.0,
+        "latency_median_ms": 38.46837498713285
+      },
+      "quality_change_db": -0.021127960769575793
+    },
+    {
+      "image": "test_002.npy",
+      "all_neural": {
+        "psnr_db": 13.161529854175987,
+        "routed_percent": 100.0,
+        "latency_median_ms": 38.92045799875632
+      },
+      "calibrated": {
+        "psnr_db": 12.640792452096372,
+        "routed_percent": 96.0,
+        "latency_median_ms": 38.573125028051436
+      },
+      "quality_change_db": -0.5207374020796145
+    },
+    {
+      "image": "test_003.npy",
+      "all_neural": {
+        "psnr_db": 10.704947029213479,
+        "routed_percent": 100.0,
+        "latency_median_ms": 38.52458402980119
+      },
+      "calibrated": {
+        "psnr_db": 10.607149496978124,
+        "routed_percent": 96.0,
+        "latency_median_ms": 38.503834046423435
+      },
+      "quality_change_db": -0.09779753223535437
+    }
+  ],
+  "mean_psnr_change_db": -0.21471505625624943,
+  "mean_routed_percent": 96.0,
+  "mean_latency_all_ms": 39.617260757950135,
+  "mean_latency_calibrated_ms": 38.62078125530388
+}

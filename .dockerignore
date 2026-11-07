@@ -1,0 +1,17 @@
+.git
+.impeccable
+.venv
+.venv*
+.trainenv
+__pycache__
+*.py[cod]
+data/
+work/
+evaluation*.json
+*_evaluation.json
+*_validation.json
+*_verification.json
+models/**
+!models/mod_isp.pt
+!models/sidd_srgb_nafnet_lite.pt
+!models/nilutx3style.pt

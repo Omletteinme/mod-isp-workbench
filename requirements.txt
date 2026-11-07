@@ -1,0 +1,11 @@
+Flask>=3.0
+numpy>=1.26,<2
+Pillow>=10.0
+rawpy>=0.21
+scikit-image>=0.23
+torch>=2.2
+lpips>=0.1.4
+tensorflow>=2.15
+
+timm==0.9.16
+huggingface_hub>=0.23,<1

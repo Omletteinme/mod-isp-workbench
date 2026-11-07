@@ -1,0 +1,47 @@
+{
+  "teacher": "Souza and Heidrich VMV 2023 MetaISP real_D; not Chen et al. IJCAI 2024",
+  "context": "patch-local resized BGR rather than full-frame; sensor metadata supplied explicitly",
+  "dataset": "./data/test",
+  "neutral": [
+    0.5703125,
+    1.0078125,
+    0.5078125
+  ],
+  "device_style": 0,
+  "parameters": 6257501,
+  "environment": "macOS-15.7.7-arm64-arm-64bit",
+  "results": [
+    {
+      "image": "test_000.npy",
+      "latency_ms": 281.38,
+      "psnr": 19.79,
+      "ssim": 0.7993,
+      "delta_e": 10.71,
+      "lpips": 0.172
+    },
+    {
+      "image": "test_001.npy",
+      "latency_ms": 222.04,
+      "psnr": 16.55,
+      "ssim": 0.5929,
+      "delta_e": 16.18,
+      "lpips": 0.2332
+    },
+    {
+      "image": "test_002.npy",
+      "latency_ms": 217.54,
+      "psnr": 15.8,
+      "ssim": 0.6933,
+      "delta_e": 14.27,
+      "lpips": 0.1738
+    },
+    {
+      "image": "test_003.npy",
+      "latency_ms": 215.74,
+      "psnr": 18.38,
+      "ssim": 0.69,
+      "delta_e": 13.56,
+      "lpips": 0.1745
+    }
+  ]
+}
