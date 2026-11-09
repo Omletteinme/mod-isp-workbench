@@ -34,6 +34,16 @@ docker run --rm -p 127.0.0.1:5050:5050 mod-isp
 
 Then open http://127.0.0.1:5050. The port is published on loopback by default. The image includes the local inference checkpoints and a pinned, license-preserved copy of Samsung's NAFNet architecture, but excludes datasets and teacher weights. Training, evaluation, and LiteRT conversion use the full host requirements and scripts below. The Docker image has not been built in this workspace because Docker is not installed; see `CONTAINER_NOTICE.md` for its scope and the upstream license notice.
 
+### Rebuilding the page's pipeline figure
+
+The "How it works" figure is a small React + TypeScript island in `web/` (uses [react-isokit](https://www.npmjs.com/package/react-isokit), MIT). The built files, `static/pipeline.js` and `static/pipeline.css`, are committed, so running or deploying the app needs no Node. To change the figure, use Node 20 or later:
+
+```sh
+cd web
+npm install
+npm run build
+```
+
 ## Project documents and evaluation
 
 - [System architecture diagram](docs/architecture.md)
@@ -77,7 +87,8 @@ Evaluation records per-image PSNR, SSIM, CIEDE2000 Delta E, LPIPS (where availab
 - The Bayer checkpoint was trained on a tiny, single-scene subset; do not report the blueprint's projected numbers as measured outcomes. The separate SIDD-CC sRGB model is a denoising adaptation, not a Bayer RAW-to-RGB model.
 - The compact Bayer restoration model has its own learned color transform; its training is too small and camera-specific calibration is not established. Camera RAW output now goes through LibRaw's embedded DNG color rendering. The optional separate CNILUT is a pretrained creative style transform, not a camera color calibration. The gate is calibrated for PSNR on one scene, not a sensor-noise model. Sharpening is unsharp masking. There is no measured downstream object-detection improvement.
 - The IJCAI 2024 MetaISP teacher weights, learned gating, adaptive sensor-aware noise calibration, mobile NPU timing and a broad multi-scene benchmark are not supplied. Full blueprint parity and target quality require those separate research and validation steps.
-- The rendered-RGB human path estimates exposure from linearized luminance, applies a highlight shoulder while preserving RGB channel ratios, then uses conservative bilateral denoising and sharpening. The RGB hybrid path ranks tiles by robust high-pass residual and sends the noisiest half to the sRGB denoiser; this is an RGB routing heuristic, not the calibrated Bayer variance gate. The existing Bayer gate applies only to Bayer input. Mode and strength tune the exposure target and finishing. A camera-specific CCM cannot be recovered from an ordinary JPEG.
+- The rendered-RGB human path estimates exposure from linearized luminance (it only brightens; images already above the target are not darkened), applies a highlight shoulder while preserving RGB channel ratios, then runs non-local-means denoising whose strength follows a robust luma-noise estimate of the tone-mapped image (skipped below an estimate of 3.5 on an 8-bit scale, where it only softens), and sharpening that backs off as noise rises. The RGB hybrid path keeps that classical-denoised image as its base, ranks tiles by robust high-pass residual and sends the noisiest half to the sRGB denoiser; it also checks whether the network actually lowered the image's noise estimate (to 85% of the input's or less) and returns the classical result when it did not. The noise estimate is the larger of a pixel-level Laplacian read and a flat-region read, so it also catches grain correlated over a few pixels. The 3.5 and 0.85 thresholds were set from synthetic noise tests, not real sensor noise. The tile ranking is an RGB routing heuristic, not the calibrated Bayer variance gate. The existing Bayer gate applies only to Bayer input. Mode and strength tune the exposure target and finishing. A camera-specific CCM cannot be recovered from an ordinary JPEG.
+- Synthetic-noise check of the rendered-RGB paths (one clean photo plus Gaussian noise, PSNR against the tone-mapped clean image, one run, so indicative only): at sigma 15 / 25 / 60 the tone-mapped noisy input scored 25.1 / 20.9 / 14.0 dB, Classical 28.3 / 25.9 / 22.5, Learned 27.6 / 22.9 / 15.0 and Hybrid 27.7 / 23.2 / 22.6. On a heavy, spatially correlated colour-noise image the network left the noise estimate unchanged and Hybrid fell back to Classical. The sRGB network helps on moderate noise but trails non-local means on this noise type, so Hybrid currently trails Classical below the noise cutoff. How the network does on real SIDD noise is not re-measured here because the dataset is not in this repository.
 
 ## Included small-scale run
 

@@ -1,22 +1,30 @@
 ---
-name: MOD-ISP Workbench
-description: A local image-restoration workbench for comparing processing paths and measured outputs.
+name: Photosite Workbench
+description: A local image-restoration workbench for comparing processing paths and measured outputs, presented as a bento board of flat tiles.
 colors:
-  ink: "#17191e"
-  night: "#111318"
-  canvas: "#ffffff"
-  accent: "#2056ed"
-  accent-dark: "#1743c3"
-  accent-wash: "#eff3ff"
-  line: "#e5e6e8"
-  muted: "#62666d"
+  page: "#0b0b0d"
+  tile: "#f1f1f3"
+  ink: "#0d0d10"
+  violet: "#7357f6"
+  violet-deep: "#5a3ff0"
+  lavender: "#dcd5ff"
+  peach: "#f6efe9"
+  orange: "#f47a3a"
+  yellow: "#f5d13b"
+  muted: "#5d5f66"
+  line: "#d9d9de"
 typography:
   display:
     fontFamily: "Manrope, sans-serif"
-    fontSize: "clamp(34px, 4.3vw, 56px)"
+    fontSize: "clamp(24px, 2.3vw, 34px)"
     fontWeight: 600
-    lineHeight: 1.06
-    letterSpacing: "-0.055em"
+    lineHeight: 1.08
+    letterSpacing: "-0.045em"
+  wordmark:
+    fontFamily: "Manrope, sans-serif"
+    fontWeight: 700
+    letterSpacing: "-0.06em"
+    note: "Always lowercase: photosite"
   body:
     fontFamily: "Manrope, sans-serif"
     fontSize: "14px"
@@ -24,105 +32,64 @@ typography:
     lineHeight: 1.5
   label:
     fontFamily: "DM Mono, monospace"
-    fontSize: "9px"
-    fontWeight: 400
+    fontSize: "10px"
     letterSpacing: "0.08em"
 rounded:
-  sharp: "1px"
+  tile: "8px"
+  pill: "999px"
 spacing:
-  xs: "4px"
-  sm: "8px"
-  md: "16px"
-  lg: "24px"
-  xl: "32px"
+  gap: "10px"
+  tile-padding: "28px"
 components:
-  button-primary:
-    backgroundColor: "{colors.accent}"
-    textColor: "{colors.canvas}"
-    typography: "Manrope, 11px, 700"
-    rounded: "{rounded.sharp}"
-    padding: "0 13px"
-    height: "42px"
+  pill-primary:
+    backgroundColor: "{colors.violet-deep}"
+    textColor: "#ffffff"
+    rounded: "{rounded.pill}"
+    height: "46px"
+  pill-outline:
+    border: "1.5px solid {colors.ink}"
+    rounded: "{rounded.pill}"
 ---
 
-# Design System: MOD-ISP Workbench
+# Design System: Photosite Workbench
 
 ## Overview
 
-**Creative North Star: The Image Signal Workbench**
+**Creative North Star: A Board of Flat Tiles**
 
-The interface treats restoration as a hands-on investigation. A dark signal field introduces the image pipeline; a white, finely ruled work surface keeps image evidence and measured outputs legible. Cobalt marks the active route and important actions. Compact mono labels identify technical context without turning the whole interface into a console.
+The page is a near-black field holding tiles with 10px gaps and 8px corners. Each tile is one flat surface: solid violet, off-white, lavender gradient, peach-to-orange gradient, or black. Tiles do not nest inside other tiles. Hairline dividers separate things inside a tile.
 
-The user-provided reference informs the grid, contrast, cobalt signal pattern, and editorial typography. The app remains a working tool: no invented customers, demo metrics, or claims of general quality.
+The hero is a bento grid. A tall poster tile holds the headline over a grey dot field and an animated 3D Bayer mosaic (RGGB photosites on a silicon plate) rendered as violet halftone. The other tiles carry the mark, the lowercase wordmark, a halftone aperture, a tagline and format glyphs, and capability pills. Below the hero, the workbench sections reuse the same tile surfaces. The comparison panels sit directly on the dark page.
+
+The look takes its structure (bento grid, halftone art, pill tags, outlined and filled dot clusters) from a brand board supplied by the project owner. It uses Photosite's own name, mark and copy. The app remains a working tool: no invented customers, demo metrics, or claims of general quality.
 
 **Key Characteristics:**
+- Flat tiles on near-black, never boxes in boxes.
+- Violet is the signal colour; orange and yellow appear only in pills and the gradient tile.
+- Pills (999px radius) carry state and capability labels: black for classical, violet for learned, burnt orange for hybrid.
+- Mono labels at 9–10px for metadata only; Manrope for everything else.
 - Real image comparisons take visual priority.
-- One cobalt accent marks active controls and route state.
-- Hairline rules create structure; surfaces remain mostly flat.
-- Motion confirms processing and result changes, with reduced-motion support.
 
 ## Colors
 
-The palette pairs near-black instrument framing and white work surfaces with a single saturated cobalt accent.
-
-### Primary
-- **Signal Cobalt** (#2056ed): Active route, primary action, links, and small signal marks.
-- **Deep Cobalt** (#1743c3): Hover and pressed states.
-
-### Neutral
-- **Instrument Ink** (#17191e): Primary text.
-- **Night Field** (#111318): Header and signal panel.
-- **White Ground** (#ffffff): Main work surface.
-- **Rule Gray** (#e5e6e8): Dividers and image plate borders.
-- **Slate Text** (#62666d): Supporting text.
+- **Page** (`#0b0b0d`) is the background behind every tile.
+- **Tile** (`#f1f1f3`) is the working surface for forms, tables and paths.
+- **Violet** (`#7357f6`) fills the logo tile and halftone art; **Violet deep** (`#5a3ff0`) is for buttons, active states and small coloured text, because white on it passes contrast.
+- **Lavender**, **peach** and **orange** appear in the measurements tile, the capability tile and the large mark tile.
+- **Muted** (`#5d5f66`) is secondary text on off-white tiles.
 
 ## Typography
 
-**Display Font:** Manrope (self-hosted, variable)
-**Body Font:** Manrope (self-hosted)
-**Label/Mono Font:** DM Mono (self-hosted)
-
-**Character:** Manrope carries compact, confident headings and readable controls. DM Mono is reserved for measured values, technical labels, dimensions, and status.
-
-### Hierarchy
-- **Display** (600, 34–56px, 1.06): Workbench statement.
-- **Title** (650, 19–21px, 1.2): Workflow section headings.
-- **Body** (400, 11–14px, 1.5): Explanations and control labels.
-- **Label** (400, 8–10px, 1.4, mono): Data labels and indices; keep readable and high-contrast.
-
-Manrope and DM Mono are licensed under the SIL Open Font License; license texts are in `static/fonts/`.
-
-## Layout
-
-The desktop work surface is capped at 1320px with 30px gutters. It flows in task order: input and profile, paired source/output plates, processing paths, then measurements. The comparison is the largest light-surface region. At narrow widths the input row spans the control strip, the two image plates stack, and the measurement table scrolls horizontally rather than collapsing values.
-
-## Elevation & Depth
-
-The system is flat. Borders, dark/light field changes, and selection fills establish hierarchy. A restrained neutral shadow is reserved for the open adjustments panel; avoid colored glows and persistent elevation.
-
-## Shapes
-
-Use square or 1px corners. Image plates, controls, and rows use 1px rules. Keep the geometry precise and avoid pill-shaped containers.
+Manrope (self-hosted variable font) at weight 600–800 for headings, with tight negative tracking. DM Mono (self-hosted) for corner labels, section indexes and metric labels. Section headings are sentence case; taglines inside tiles are uppercase and medium weight.
 
 ## Components
 
-### Primary action
-A cobalt rectangular button with an explicit verb, a concise arrow, visible disabled state, and short hover transition. While processing, the action label changes and its glyph rotates.
+- **Pills:** primary (violet-deep fill), white, outlined, black and yellow variants. Used for the CTA, nav, privacy note, capability tags and path states.
+- **Controls:** the source-image, profile, reference and adjustments controls sit in one row divided by hairlines. The segmented profile control is a pill with a black active state.
+- **Before/after slider:** one black tile holds the source (left) and the processed output (right) stacked in a single frame, with a draggable violet handle. Click or drag anywhere on the image, or use the arrow keys, Home and End on the handle (Shift for bigger steps). Empty states show a dot field with one message on each side of the handle.
+- **Pipeline figure:** the "How it works" tile sits on `#15131c` with the steps on the left and an isometric react-isokit figure on the right, themed with the violet palette (orange when the classical path is taken). Source is `web/src/components/ui/isp-pipeline.tsx` and `.css`; `web/build.mjs` bundles it into `static/pipeline.js` and `static/pipeline.css`.
+- **Mosaic:** `static/mosaic.js` draws the poster artwork with WebGL2. It falls back to the static dot field without WebGL2 and draws one still frame under `prefers-reduced-motion`.
 
-### Image plates
-Each plate has a compact caption with source/output role and actual file or dimension metadata. Empty state uses a quiet registration grid; loaded images are contained rather than cropped.
+## Layout
 
-### Processing path rows
-Use full-width selectable rows. Show the method, domain-specific description, actual runtime, availability/routing state, and a quiet selected tint. Disabled paths remain legible.
-
-### Measurements
-Use tabular numerals and aligned columns. Distinguish run-local memory from reference quality; explain when reference metrics are unavailable.
-
-## Do's and Don'ts
-
-- Do keep rendered RGB and Bayer sensor inputs distinct in descriptions.
-- Do show that processing runs locally and that the implementation is experimental.
-- Do label measured values with their actual scope and caveats.
-- Don't add testimonials, unsupported benchmark claims, or fabricated images.
-- Don't animate full-resolution image pixels or introduce motion that delays a task.
-- Don't use cobalt glow, decorative gradients, or generic rounded cards.
+The hero is a 12-column, 6-row grid sized to `clamp(560px, 100vh − 100px, 780px)` so the headline, call to action and mosaic are visible on a small laptop. It is staggered: the poster spans rows 1–5, the logo tile rows 1–2, the wordmark rows 1–3, the aperture tile rows 3–6, the capability pills rows 4–6, and the tagline row 6, so no two columns split at the same row. Below the hero, sections sit one or two columns off each other (setup and RAW record at columns 1–11, the workflow tile at 2–12, processing paths at 1–10, measurements at 3–12). At 1040px and below everything is full width and the offsets drop; at 700px and below the hero is one column and the logo tile is hidden.

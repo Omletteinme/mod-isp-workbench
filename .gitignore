@@ -17,3 +17,6 @@ models/metaisp_2023_real_D.pth
 work/
 .vercel
 dist/
+
+# Node dependencies for the pipeline figure (web/); built output lives in static/
+web/node_modules/

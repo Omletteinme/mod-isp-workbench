@@ -1,0 +1,21 @@
+{
+  "name": "mod-isp-pipeline-figure",
+  "private": true,
+  "type": "module",
+  "description": "Source for the interactive pipeline figure on the MOD-ISP page. `npm run build` writes ../static/pipeline.js and ../static/pipeline.css.",
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-isokit": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.2.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.0"
+  }
+}

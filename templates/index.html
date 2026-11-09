@@ -3,23 +3,57 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#111318">
-  <title>MOD-ISP · Image restoration workbench</title>
+  <meta name="theme-color" content="#0b0b0d">
+  <title>Photosite · Image restoration workbench</title>
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/pipeline.css">
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="/" aria-label="MOD-ISP home"><span class="brand-mark" aria-hidden="true">M</span><span>MOD<span class="brand-dash">—</span>ISP</span></a>
-    <nav class="topnav" aria-label="Workbench sections"><a class="current" href="#workbench">Workbench</a><a href="#methods-title">Processing paths</a><a href="#measurements-title">Measurements</a></nav>
+    <a class="brand" href="/" aria-label="Photosite home"><span class="brand-mark" aria-hidden="true">P</span><span class="brand-word">photosite</span></a>
+    <nav class="topnav" aria-label="Workbench sections"><a class="current" href="#workbench">Workbench</a><a href="#pipeline">Workflow</a><a href="#methods-title">Processing paths</a><a href="#measurements-title">Measurements</a></nav>
     <span class="system-status"><i id="status-dot" aria-hidden="true"></i><span id="model-status">Checking local processors</span></span>
   </header>
 
   <main id="workbench" class="workspace">
-    <section class="intro" aria-labelledby="page-title">
-      <div class="signal-art" aria-hidden="true"><span class="signal-label">IMAGE SIGNAL / LOCAL SESSION</span><div class="signal-grid"></div><div class="signal-trace"></div><div class="signal-index">R G G B <span>→</span> RGB</div></div>
-      <div class="intro-copy"><p class="eyebrow"><span class="live-dot"></span> LOCAL IMAGE LAB <span class="eyebrow-rule"></span> MOD-ISP</p><h1 id="page-title">Image restoration,<br><span>under the microscope.</span></h1><div class="intro-foot"><p>Compare classical, learned, and hybrid processing on your own image. Results and measurements stay on this machine.</p><span class="local-note">EXPERIMENTAL WORKBENCH</span></div></div>
+    <section class="hero" aria-labelledby="page-title">
+      <div class="tile t-poster">
+        <div class="poster-art" aria-hidden="true"><canvas class="mosaic-canvas"></canvas></div>
+        <span class="corner corner-tl" aria-hidden="true">PHOTOSITE</span>
+        <span class="corner corner-tr">EXPERIMENTAL WORKBENCH</span>
+        <div class="poster-copy">
+          <h1 id="page-title">Image restoration,<br>under the microscope.</h1>
+          <p>Compare classical, learned and hybrid processing on your own image. Everything stays on this machine.</p>
+          <a class="pill pill-violet" href="#run-setup">Start a run <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+
+      <div class="tile t-logo" aria-hidden="true"><span class="big-m">P</span></div>
+
+      <div class="tile t-word" aria-hidden="true"><span class="brand-mark brand-mark-lg">P</span><span class="wordmark">photosite</span></div>
+
+      <div class="tile t-eye">
+        <div class="eye" aria-hidden="true"><i></i></div>
+        <span class="corner">BAYER → RGB</span>
+        <p class="tag">Classical.<br>Learned.<br>Hybrid.</p>
+        <svg class="rggb" viewBox="0 0 52 52" aria-hidden="true"><rect width="24" height="24" rx="4" fill="#d9483e"/><rect x="28" width="24" height="24" rx="4" fill="#3da56b"/><rect y="28" width="24" height="24" rx="4" fill="#3da56b"/><rect x="28" y="28" width="24" height="24" rx="4" fill="#2f55f0"/></svg>
+      </div>
+
+      <div class="tile t-tag">
+        <p class="tag">Less noise. More signal.</p>
+        <ul class="glyphs" aria-label="Supported inputs"><li>RAW</li><li>NPY</li><li>JPG</li><li>TIF</li></ul>
+      </div>
+
+      <div class="tile t-pills">
+        <ul class="pills" aria-label="Capabilities">
+          <li class="pill pill-line">• Classical</li><li class="pill pill-white">• Learned</li><li class="pill pill-black">• Hybrid</li>
+          <li class="pill pill-yellow">• Runs locally</li><li class="pill pill-violet">• Measured</li><li class="pill pill-white">• RAW-aware</li>
+        </ul>
+      </div>
     </section>
 
+
+    <span id="run-setup" class="anchor" aria-hidden="true"></span>
     <section class="workflow" aria-label="Image processing workflow">
       <div class="workflow-head"><div><span class="section-index">01 / INPUT</span><h2>Set up a run</h2></div><span class="privacy-note"><span class="privacy-icon" aria-hidden="true">↗</span> Processing is local</span></div>
       <div class="control-strip">
@@ -57,10 +91,35 @@
 
     <section class="proof-section" aria-labelledby="proof-title">
       <div class="section-heading"><div><span class="section-index">02 / COMPARE</span><h2 id="proof-title">The image, in two states.</h2><p id="source-summary">Choose a source image to begin.</p></div><a id="download" class="download disabled" download="mod-isp-hybrid.jpg" aria-disabled="true"><span>Download output</span><b aria-hidden="true">↓</b></a></div>
-      <div class="paired-images" id="comparison">
-        <figure class="image-panel"><figcaption><span><i class="plate-dot" aria-hidden="true"></i> SOURCE</span><span id="input-meta">Waiting for image</span></figcaption><div class="image-frame" id="input-frame"><img id="input-img" src="data:," alt="Input image preview"><div id="empty-input" class="empty-output"><span class="empty-cross" aria-hidden="true">＋</span><span>Source image appears here</span><small>DROP AN IMAGE TO START</small></div></div></figure>
-        <figure class="image-panel output-panel"><figcaption><span><i class="plate-dot output-dot" aria-hidden="true"></i><span id="output-label">HYBRID OUTPUT</span></span><span id="dimensions">—</span></figcaption><div class="image-frame output-frame" id="output-frame"><img id="output-img" src="data:," alt="Processed output preview"><div id="empty-output" class="empty-output"><span class="empty-cross" aria-hidden="true">＋</span><span>Processed image appears here</span><small>RUN PROCESSING TO VIEW RESULT</small></div></div></figure>
+      <figure class="compare" id="comparison">
+        <figcaption>
+          <span><i class="plate-dot" aria-hidden="true"></i> SOURCE <span id="input-meta" class="meta">Waiting for image</span></span>
+          <span><span id="output-label">HYBRID OUTPUT</span> <span id="dimensions" class="meta">—</span> <i class="plate-dot output-dot" aria-hidden="true"></i></span>
+        </figcaption>
+        <div class="compare-stage" id="compare-stage" style="--pos:50%">
+          <div class="image-frame" id="input-frame"><img id="input-img" src="data:," alt="Input image preview"><div id="empty-input" class="empty-output"><span class="empty-cross" aria-hidden="true">＋</span><span>Source image appears here</span><small>DROP AN IMAGE TO START</small></div></div>
+          <div class="image-frame output-frame" id="output-frame"><img id="output-img" src="data:," alt="Processed output preview"><div id="empty-output" class="empty-output"><span class="empty-cross" aria-hidden="true">＋</span><span>Processed image appears here</span><small>RUN PROCESSING TO VIEW RESULT</small></div></div>
+          <div class="compare-handle" id="compare-handle" role="slider" tabindex="0" aria-label="Reveal source on the left and processed output on the right" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50% source, 50% output"><span aria-hidden="true">↔</span></div>
+        </div>
+      </figure>
+    </section>
+
+    <section id="pipeline" class="pipeline-section" aria-labelledby="pipeline-title">
+      <div class="pipeline-copy">
+        <span class="section-index">HOW IT WORKS</span>
+        <h2 id="pipeline-title">From sensor mosaic<br>to restored image.</h2>
+        <p class="pipeline-lede">Each upload is decoded once, and the server then produces classical, learned and hybrid outputs from it. The figure traces two of them: the hybrid path through all four stages, and the classical baseline, which never uses the gate or the network.</p>
+        <ol class="pipeline-steps">
+          <li><span class="step-n">01</span><div><h3>Decode</h3><p>RAW and RGGB NPY files become a normalized Bayer mosaic (black level, white balance), and camera RAW also gets a LibRaw render. Rendered images (JPEG, PNG, WebP, TIFF) stay RGB and never go to the Bayer model.</p></div></li>
+          <li><span class="step-n">02</span><div><h3>Gate</h3><p>For the hybrid path, tiles are ranked and a fixed share goes to the network: by variance relative to brightness on Bayer data, by a high-frequency residual on rendered RGB. It is a compute budget, not a noise estimate. The learned path skips the gate and runs every tile.</p></div></li>
+          <li><span class="step-n">03</span><div><h3>Neural</h3><p>Routed tiles run through the learned model: the 29,980-parameter Bayer student, or a fine-tuned NAFNet-lite denoiser for rendered images, which get exposure and tone mapping first.</p></div></li>
+          <li><span class="step-n">04</span><div><h3>Finish</h3><p>Hybrid blends the network's tiles back into the classically denoised image with a smooth mask (on Bayer data the base is a plain demosaic), then applies the optional style and, on Bayer data, sharpening. The classical baseline tone-maps the image, denoises it with non-local means scaled to the estimated noise, and sharpens. When the network does not reduce an image's noise, Hybrid on a rendered image returns the classical result.</p></div></li>
+        </ol>
       </div>
+      <figure class="pipeline-figure">
+        <div id="pipeline-root" class="pipeline-root"><p class="pipeline-fallback">The interactive pipeline figure needs JavaScript.</p></div>
+        <figcaption>Figure drawn with react-isokit (MIT). Stage readouts are illustrative; measured results are in the run measurements below.</figcaption>
+      </figure>
     </section>
 
     <section id="raw-integrity" class="raw-integrity" aria-labelledby="raw-integrity-title" hidden>
@@ -97,8 +156,10 @@
       <div class="quality-block"><div class="quality-heading"><h3>Reference quality</h3><span id="quality-state">Reference required</span></div><dl class="quality-metrics"><div><dt>PSNR</dt><dd id="psnr">—</dd></div><div><dt>SSIM</dt><dd id="ssim">—</dd></div><div><dt>Delta E 2000</dt><dd id="delta-e">—</dd></div><div><dt>LPIPS</dt><dd id="lpips">—</dd></div></dl></div>
       <p id="measurement-note" class="measurement-note">Quality scores require an aligned reference. Memory reports Python allocations and excludes native/accelerator allocations.</p>
     </section>
-    <footer class="page-footer"><span>MOD-ISP · LOCAL RESEARCH WORKBENCH</span><span>EXPERIMENTAL IMPLEMENTATION <i aria-hidden="true">·</i> RESULTS VARY BY INPUT</span></footer>
+    <footer class="page-footer"><span>PHOTOSITE · LOCAL RESEARCH WORKBENCH</span><span class="footer-tag">LESS NOISE · MORE SIGNAL</span><span>EXPERIMENTAL IMPLEMENTATION <i aria-hidden="true">·</i> RESULTS VARY BY INPUT</span></footer>
   </main>
+  <script src="/static/mosaic.js"></script>
+  <script src="/static/pipeline.js" defer></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

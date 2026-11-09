@@ -248,3 +248,44 @@ fetch('/api/status').then(response => response.json()).then(status => {
   $('#model-status').textContent = 'Local processing service unavailable';
   $('.system-status').classList.add('error');
 });
+
+// Before/after slider: drag, click anywhere on the image, or use the arrow keys on the handle.
+(() => {
+  const stage = $('#compare-stage');
+  const handle = $('#compare-handle');
+  if (!stage || !handle) return;
+  let pos = 50;
+  const set = value => {
+    pos = Math.min(100, Math.max(0, value));
+    stage.style.setProperty('--pos', `${pos}%`);
+    handle.setAttribute('aria-valuenow', String(Math.round(pos)));
+    handle.setAttribute('aria-valuetext', `${Math.round(pos)}% source, ${Math.round(100 - pos)}% output`);
+  };
+  const fromPointer = event => {
+    const box = stage.getBoundingClientRect();
+    set(((event.clientX - box.left) / box.width) * 100);
+  };
+  stage.addEventListener('pointerdown', event => {
+    if (event.button !== 0) return;
+    stage.setPointerCapture(event.pointerId);
+    stage.classList.add('dragging');
+    handle.focus({ preventScroll: true });
+    fromPointer(event);
+  });
+  stage.addEventListener('pointermove', event => {
+    if (stage.classList.contains('dragging')) fromPointer(event);
+  });
+  const end = event => {
+    stage.classList.remove('dragging');
+    if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+  };
+  stage.addEventListener('pointerup', end);
+  stage.addEventListener('pointercancel', end);
+  handle.addEventListener('keydown', event => {
+    const step = event.shiftKey ? 10 : 2;
+    const next = { ArrowLeft: pos - step, ArrowDown: pos - step, ArrowRight: pos + step, ArrowUp: pos + step, Home: 0, End: 100 }[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    set(next);
+  });
+})();

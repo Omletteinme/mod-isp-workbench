@@ -1,5 +1,6 @@
 import base64, io, os, platform, sys, time, tracemalloc
 from pathlib import Path
+import cv2
 import numpy as np
 from PIL import Image, ImageFilter, ImageOps
 from flask import Flask, request, jsonify, render_template
@@ -13,6 +14,11 @@ CHECKPOINT = ROOT / 'models' / 'mod_isp.pt'
 RGB_CHECKPOINT = ROOT / 'models' / 'sidd_srgb_nafnet_lite.pt'
 RGB_MODEL_CACHE = {}
 LPIPS_MODEL = None
+# Measured on synthetic Gaussian noise (see README). Below this luma-noise estimate non-local means only
+# softens a clean image. The sRGB network is trusted only if its output reads at most this fraction of its
+# input's noise: ~0.6-0.8 where it helps (sigma <= 25), ~1.0 at sigma 35, >1 where it adds grain.
+CLASSICAL_MIN_NOISE = 3.5
+NEURAL_MIN_GAIN = 0.85
 RAW_EXT = {'.dng','.nef','.cr2','.cr3','.arw','.raf','.rw2','.npy'}
 
 def samsung_repo_path():
@@ -91,7 +97,9 @@ def exposure_gain(im, mode, strength):
     y=lin @ np.array([0.2126,0.7152,0.0722],dtype=np.float32)
     measured=float(np.percentile(y,55))
     target=0.050 if mode=='human' else 0.030
-    ev=float(np.clip(np.log2(target/max(measured,1e-5)),-1.0,4.5))*strength
+    # Brighten only: a well-exposed image is left alone. Darkening it (the old -1 EV floor) cut signal
+    # without removing noise, so the output looked grainier than the source.
+    ev=float(np.clip(np.log2(target/max(measured,1e-5)),0.0,4.5))*strength
     return 2.0**ev
 
 def finish_rgb(im, mode, strength=1.0, style=None, apply_exposure=True, sharpen=True):
@@ -113,28 +121,42 @@ def finish_rgb(im, mode, strength=1.0, style=None, apply_exposure=True, sharpen=
         out=apply_cnilut(out,style)
     return out.filter(ImageFilter.UnsharpMask(radius=1.15,percent=int((48 if mode=='human' else 30)*strength),threshold=3)) if sharpen else out
 
-def classical_rgb(im, mode, strength, style=None):
-    """Classical degraded-RGB path: adaptive exposure, conservative denoise, tone and detail."""
-    gain=exposure_gain(im,mode,strength)
-    a=np.asarray(im,dtype=np.float32)/255
-    lin=srgb_to_linear(a)*gain
-    y=lin @ np.array([0.2126,0.7152,0.0722],dtype=np.float32)
-    white=max(float(np.percentile(y,99.7)),0.12)
-    yd=np.clip(y*(1+y/(white*white))/(1+y),0,1)
-    lin=np.clip(lin*(yd/np.maximum(y,1e-6))[...,None],0,1)
-    base=Image.fromarray(np.uint8(np.clip(linear_to_srgb(lin),0,1)*255))
-    # A small bilateral filter smooths chroma/noise while retaining high-contrast edges.
-    try:
-        import cv2
-        arr=np.asarray(base)
-        den=cv2.bilateralFilter(arr,5,18,2.0)
-        base=Image.blend(base,Image.fromarray(den),min(0.28,0.12*strength))
-    except ImportError:
-        base=Image.blend(base,base.filter(ImageFilter.GaussianBlur(0.45)),min(0.14,0.06*strength))
+def estimate_noise(im):
+    """Luma noise sigma in 8-bit units. Takes the larger of two reads: a pixel-level Laplacian
+    (white noise, robust to edges) and the spread in the flattest 20% of 9x9 windows after a
+    2.5px high-pass, which also sees grain correlated over a few pixels (resized or compressed
+    noise) that the Laplacian reads as clean."""
+    y = cv2.cvtColor(np.asarray(im), cv2.COLOR_RGB2GRAY).astype(np.float32)
+    if min(y.shape) < 16: return 0.0
+    r = cv2.filter2D(y, -1, np.array([[1, -2, 1], [-2, 4, -2], [1, -2, 1]], np.float32))[1:-1, 1:-1]
+    white = float(np.median(np.abs(r)) / 0.6745 / 6.0)
+    hp = y - cv2.GaussianBlur(y, (0, 0), 2.5)
+    flat = float(np.sqrt(np.percentile(cv2.boxFilter(hp * hp, -1, (9, 9)), 20)))
+    return max(white, flat)
+
+def classical_denoise(im, strength):
+    """Non-local-means denoise whose strength follows the image's own noise estimate. Returns (image, sigma)."""
+    sigma = estimate_noise(im)
+    if strength <= 0 or sigma < CLASSICAL_MIN_NOISE: return im, sigma
+    h = float(np.clip(sigma * strength, 1.0, 45.0))
+    big = im.width * im.height > 4_000_000  # smaller windows keep 16 MP inputs to ~10-20 s
+    out = cv2.fastNlMeansDenoisingColored(np.asarray(im), None, h, h, 5 if big else 7, 15 if big else 21)
+    return Image.fromarray(out), sigma
+
+def classical_base(im, mode, strength):
+    """Exposure and tone first (noise is judged as it will be seen), then denoise. Shared by Classical and Hybrid."""
+    exposed = finish_rgb(im, mode, strength, None, apply_exposure=True, sharpen=False)
+    denoised, sigma = classical_denoise(exposed, strength)
+    return exposed, denoised, sigma
+
+def classical_rgb(denoised, sigma, mode, strength, style=None):
+    """Classical output: optional style, then sharpening that backs off as the image gets noisier."""
+    out = denoised
     if style is not None:
         from cnilut import apply_cnilut
-        base=apply_cnilut(base,style)
-    return base.filter(ImageFilter.UnsharpMask(radius=1.15,percent=int((48 if mode=='human' else 30)*strength),threshold=3))
+        out = apply_cnilut(out, style)
+    percent = int((48 if mode == 'human' else 30) * strength * max(0.25, 1 - sigma / 25))
+    return out.filter(ImageFilter.UnsharpMask(radius=1.15, percent=percent, threshold=3))
 
 def classical_bayer(mosaic, mode, strength, style=None):
     # Bayer demosaic returns linear RGB; render once, then perform the perceptual stages.
@@ -156,7 +178,7 @@ def load_rgb_denoiser(device):
     return model,torch
 
 def denoise_rgb_tiles(image, hybrid=False, route_fraction=0.5, tile=512, overlap=64,
-                      precomputed=None, return_cache=False):
+                      precomputed=None, return_cache=False, base=None):
     """Run the SIDD sRGB denoiser on RGB tiles, optionally reusing learned tiles."""
     import torch
     device=torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
@@ -217,7 +239,8 @@ def denoise_rgb_tiles(image, hybrid=False, route_fraction=0.5, tile=512, overlap
     pred=acc/np.maximum(weight_sum,1e-8)
     if hybrid:
         coverage=np.clip(weight_sum,0,1)
-        out=src*(1-coverage)+pred*coverage
+        keep=src if base is None else np.asarray(base,dtype=np.float32)/255
+        out=keep*(1-coverage)+pred*coverage
     else: out=pred
     result=(Image.fromarray(np.uint8(np.clip(out,0,1)*255)),round(100*routed/max(len(coords),1),1))
     return (*result,tile_cache) if return_cache else result
@@ -313,14 +336,16 @@ def process():
         reference=None
         if 'reference' in request.files and request.files['reference'].filename: reference,_,_,_,_=decode(request.files['reference'])
         tracemalloc.start(); start=time.perf_counter()
-        result=classical_rgb(im,mode,strength,style)
+        exposed,denoised,sigma=classical_base(im,mode,strength)
+        result=classical_rgb(denoised,sigma,mode,strength,style)
         elapsed=(time.perf_counter()-start)*1000; _,peak=tracemalloc.get_traced_memory(); tracemalloc.stop()
         outputs={'classical':{'image':encode(result),'latency_ms':round(elapsed,1),'memory_mb':round(peak/1048576,2),'metrics':metrics(result,reference) if reference else None}}
         camera_managed_raw=input_type=='bayer' and input_meta.get('raw_render') is not None
         status=rgb_model_status() if input_type=='rgb' else model_status()
         if status['available']:
-            rgb_model_input=None
+            rgb_model_input=exposed
             rgb_tile_cache=None
+            neural_helps=True
             for name in ['learned','hybrid']:
                 tracemalloc.start(); start=time.perf_counter()
                 reused_inference=False
@@ -332,18 +357,22 @@ def process():
                 else:
                     # Rendered RGB uploads use the separately trained SIDD-CC
                     # sRGB denoiser; its benchmark does not stand in for RAW ISP.
-                    if rgb_model_input is None:
-                        rgb_model_input=finish_rgb(im,mode,strength,None,apply_exposure=True,sharpen=False)
                     if name=='learned':
                         out,routed,rgb_tile_cache=denoise_rgb_tiles(rgb_model_input,return_cache=True)
+                        # On noise the network was not trained for, it can add grain: check, don't assume.
+                        neural_helps=sigma<CLASSICAL_MIN_NOISE or estimate_noise(out)<=NEURAL_MIN_GAIN*sigma
+                    elif not neural_helps:
+                        # The network did not reduce the noise on this image: Hybrid keeps the classical result.
+                        out,routed=denoised,0.0
                     else:
-                        out,routed=denoise_rgb_tiles(rgb_model_input,hybrid=True,precomputed=rgb_tile_cache)
+                        out,routed=denoise_rgb_tiles(rgb_model_input,hybrid=True,precomputed=rgb_tile_cache,base=denoised)
                         reused_inference=True
                     out=finish_rgb(out,mode,0,style,apply_exposure=False)
                 elapsed=(time.perf_counter()-start)*1000; _,peak=tracemalloc.get_traced_memory(); tracemalloc.stop()
                 outputs[name]={'image':encode(out),'latency_ms':round(elapsed,1),'memory_mb':round(peak/1048576,2),'routed':routed,'reused_inference':reused_inference,'metrics':metrics(out,reference) if reference else None}
-        processing_note=('Camera Bayer mosaic → MOD-ISP learned RGB reconstruction; LibRaw camera render is the classical baseline.' if camera_managed_raw else ('Normalized Bayer mosaic → MOD-ISP learned RGB reconstruction' if input_type=='bayer' else 'Rendered sRGB → SIDD-CC sRGB denoiser'))
-        return jsonify(input=encode(im),width=im.width,height=im.height,input_kind=kind,input_type=input_type,camera_managed_raw=bool(camera_managed_raw),raw_integrity=input_meta.get('raw_integrity'),outputs=outputs,model=status,processing_note=processing_note,environment=f'{platform.system()} {platform.machine()} · Python {platform.python_version()}')
+        noise_note='. The learned model did not reduce this image\'s noise, so Hybrid uses the classical result.' if input_type=='rgb' and status['available'] and not neural_helps else ''
+        processing_note=('Camera Bayer mosaic → MOD-ISP learned RGB reconstruction; LibRaw camera render is the classical baseline.' if camera_managed_raw else ('Normalized Bayer mosaic → MOD-ISP learned RGB reconstruction' if input_type=='bayer' else 'Rendered sRGB → SIDD-CC sRGB denoiser'))+noise_note
+        return jsonify(input=encode(im),width=im.width,height=im.height,input_kind=kind,input_type=input_type,camera_managed_raw=bool(camera_managed_raw),raw_integrity=input_meta.get('raw_integrity'),outputs=outputs,model=status,processing_note=processing_note,noise_estimate=round(sigma,1),environment=f'{platform.system()} {platform.machine()} · Python {platform.python_version()}')
     except (ValueError, OSError) as e: return jsonify(error=str(e)),400
     except Exception as e: app.logger.exception('Processing failed'); return jsonify(error=f'Processing failed: {e}'),500
 

@@ -1,0 +1,101 @@
+/* Theme and state styling for the pipeline figure. react-isokit draws with --ik-* variables
+   at zero specificity, so these rules win. Palette matches the MOD-ISP site: violet signal
+   on a dark violet-black plate, orange for the classical path. */
+
+.fig-isp-pipeline {
+  --ik-panel: #100f16;
+  --ik-top: #272339;
+  --ik-front: #1e1b2d;
+  --ik-side: #161423;
+  --ik-well: #0c0b11;
+  --ik-line: #7f71e6;
+  --ik-detail: #3b3558;
+  --ik-live: #c4b8ff;
+  --ik-ink: #8b87a4;
+  --ik-ink-hi: #ece9ff;
+  --ik-screen: #0a0a0f;
+  --ik-screen-ink: #d9d2ff;
+  --ik-border: #2b2838;
+  --ik-glow: #7357f6;
+  --ik-glow-strength: 1;
+  --ik-glow-size: 5;
+  --ik-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ik-screen-font: var(--ik-mono);
+  border-radius: 8px;
+  font-family: var(--ik-mono);
+}
+
+/* The classical key lights the whole path orange. */
+.fig-isp-pipeline svg[data-kind="classical"] {
+  --ik-live: #ffa56b;
+  --ik-glow: #f47a3a;
+}
+
+/* Station states: idle, run (working), ok (finished), on (output live). */
+.fig-isp-pipeline .dp-stage[data-s="run"] :where(.ik-face, .ik-edge),
+.fig-isp-pipeline .dp-stage[data-s="on"] :where(.ik-face, .ik-edge) {
+  stroke: var(--ik-live);
+}
+.fig-isp-pipeline .dp-light {
+  fill: var(--ik-detail);
+  stroke: none;
+  transition: fill var(--ik-t-state) var(--ik-ease);
+}
+.fig-isp-pipeline .dp-stage[data-s="ok"] .dp-light {
+  fill: #55cd8d;
+}
+.fig-isp-pipeline .dp-stage[data-s="run"] .dp-light,
+.fig-isp-pipeline .dp-stage[data-s="on"] .dp-light {
+  fill: var(--ik-live);
+}
+
+/* Neural-stage fan spins while that stage is working. */
+.fig-isp-pipeline .dp-fan {
+  transform-origin: 0 0;
+}
+.fig-isp-pipeline .dp-stage[data-s="run"] .dp-fan {
+  animation: dp-spin 700ms linear infinite;
+}
+@keyframes dp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Busy pips on the stage screens. */
+.fig-isp-pipeline .dp-pip {
+  fill: var(--ik-screen-ink);
+  stroke: none;
+  animation: dp-pip 600ms ease-in-out infinite both;
+}
+@keyframes dp-pip {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Output gauge swings up when the output is live. */
+.fig-isp-pipeline .dp-arm {
+  transform-origin: 0 0;
+  transition: transform 420ms var(--ik-ease-move);
+}
+.fig-isp-pipeline .dp-stage[data-s="on"] .dp-arm {
+  transform: rotate(-65deg);
+}
+
+.fig-isp-pipeline .dp-name {
+  font-size: 5.4px;
+}
+.fig-isp-pipeline .dp-key {
+  font-size: 7px;
+}
+.fig-isp-pipeline .dp-key-small {
+  font-size: 5.2px;
+}
+.fig-isp-pipeline .ik-cap {
+  font-size: 9px;
+}

@@ -5,3 +5,4 @@ rawpy>=0.21,<1
 scikit-image>=0.23,<1
 torch>=2.2,<3
 gunicorn>=22,<24
+opencv-python-headless>=4.9,<4.12
